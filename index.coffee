@@ -5,7 +5,7 @@ zlib = require 'zlib'
 urlParser = require 'url'
 
 headers =
-	'user-agent': process.env.USER_AGENT || 'node-sitemap-stream-parser';
+	'user-agent': process.env.USER_AGENT || 'node-sitemap-stream-parser','Accept-Encoding' : 'gzip,sdch';
 agentOptions =
 	keepAlive: true
 	gzip: true
