@@ -21,7 +21,7 @@
   "dependencies": {
     "async": "^2.6.1",
     "commander": "^2.15.1",
-    "request": "^2.88.1",
+    "request": "^2.88.0",
     "sax": "^1.2.4"
   },
   "repository": {
