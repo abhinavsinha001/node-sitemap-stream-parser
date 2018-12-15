@@ -48,7 +48,7 @@
         var r= request.get({url,encoding:null});
         r.pause();
         r.on('response', function (resp) {
-           if(resp.statusCode === 200 && resp.headers['content-encoding'].indexOf('gzip') >=0 ){
+           if(resp.statusCode === 200 && resp.headers['content-encoding'] && resp.headers['content-encoding'].indexOf('gzip') >=0 ){
 
                r.pipe(unzip).pipe(parserStream);
                r.resume();
