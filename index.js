@@ -42,33 +42,42 @@
     _download(url, parserStream, done) {
       //console.log(url);
       var stream, unzip;
+      
       if (url.lastIndexOf('.gz') === url.length - 3) {
         unzip = zlib.createUnzip();
         var r= request.get({url,encoding:null});
         r.pause();
         r.on('response', function (resp) {
-           if(resp.statusCode === 200){
+           if(resp.statusCode === 200 && resp.headers['content-encoding'].indexOf('gzip') >=0 ){
+
                r.pipe(unzip).pipe(parserStream);
                r.resume();
            }else{  
-              console.log('Unsucessfull response code '+ resp.statusCode );
+              console.log('Invalid response code / header '+ resp.statusCode +' ' + resp.headers['content-encoding'] );
                r.pipe(parserStream);
                r.resume()
            }
         });
          return r;
+        
         // return request.get({
         //   url,
         //   encoding: null
         // }).pipe(unzip).pipe(parserStream);
       } else {
+        try{
         stream = request.get({
           url,
           gzip: true
         });
         stream.on('error', (err) => {
-          return done(err);
+          console.log(err);
+          return done();
         });
+        }catch(err){
+          console.log(err);
+          return done();
+        }
         return stream.pipe(parserStream);
       }
     }
@@ -160,16 +169,19 @@
   };
 
   exports.sitemapsInRobots = function(url, cb) {
-
+    //console.log(url);
     return request.get(url, function(err, res, body) {
       var matches;
       if (err) {
+        //console.log(err);
         return cb(err);
       }
+      //console.log(res.statusCode);
       if (res.statusCode !== 200) {
         return cb(`statusCode: ${res.statusCode}`);
       }
       matches = [];
+      //console.log(body);
       body.replace(/^Sitemap:\s?([^\s]+)$/igm, function(m, p1) {
         return matches.push(p1);
       });
